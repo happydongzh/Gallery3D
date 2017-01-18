@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>gallery 3d, 3d 相册</title>
+	<meta name="title" content="gallery 3d " />
+	<meta name="author" content="liyuan dong" />
+	<meta name="subject" content="gallery 3d, 3d 相册" />
+	<meta name="description" content="html5+原生javascript,css3实现的3d 相册" />
+	<meta name="keywords" content="html5, javascript,css3, animation,animate,3d,transform,transition,2d" />
+	<meta name="generator" content="brakets" />
+	<meta name="language" content="en,cn" />
+	<meta name="expires" content="" />
+	<meta name="abstract" content="html5,javascript,css3实现的3d 相册" />
+	<meta name="abstract" content="" />
+	<meta name="designer" content="liyuan dong" />
+	<meta name="publisher" content="liyuan dong" />
+	<meta name="revisit-after" content="" />
+	<meta name="distribution" content="global" />
+	<meta name="robots" content="all" />
+	<link rel="stylesheet" type="text/css" href="css/gallery3d.css">
+	<style>
+		body {
+			overflow: hidden;
+			margin: 0;
+			padding: 0;
+			background-image: url(css/o_wood.jpg);
+		}
+	</style>
+</head>
+
+<body>
+	<!--Controll Start-->
+	<a id="effectChange" class="button" href="#">散列</a>
+	<a id="reset" class="button" href="#">重置</a>
+	<a id="addMore" class="button" href="#">更多</a>
+	<!--Controll End-->
+
+
+	<!--Gallery Start-->
+	<div id="baseContainer" class="baseContainer">
+		<div id="containers" class="containers">
+		</div>
+	</div>
+	<!--Gallery End-->
+
+	<script src="../../JS_LIB/jquery/jquery-2.2.4.min.js"></script>
+	<script type="text/javascript" src="./javascript/gallery3d.js"></script>
+	
+	<script type="text/javascript">
+		var effectChange = document.getElementById('effectChange');
+
+		var g3d = new Gallery3d(document.getElementById('containers'), {
+			style: 'rect',
+			effect: effectChange.text == '矩阵' ? 'martrix' : 'hash', //排列形式，random：散列 | martrix：矩阵
+			elmtSize: {
+				w: 150,
+				h: 150
+			},
+			//layerConSize: {w: 800,h: 600},
+			elementRender: function (cell, data) {
+				cell.innerHTML = '<div class="album" style="background-image:url(' + data.albumpic_big + ')"></div>';
+			},
+			elementClick: function (data) {
+				/**
+				do whatever you want
+				console.log(this);
+				console.log(data);
+				**/
+			},
+			perspective: 500,
+			//点击元素时,是否幻灯片显示 open slide-show when cell click
+			osswcc: true
+
+		});
+
+		$.getJSON('./data.json', function (json) {
+			g3d.go(json.showapi_res_body.pagebean.songlist.slice(0, 21));
+		});
+
+		effectChange.addEventListener('click', function (e) {
+			g3d.switchEffect(this.text == '矩阵' ? 'hash' : 'martrix');
+			this.text = this.text == '矩阵' ? '散列' : '矩阵';
+		}, false);
+
+		document.getElementById('reset').addEventListener('click', function (e) {
+			g3d.reset();
+		}, false);
+
+		document.getElementById('addMore').addEventListener('click', function (e) {
+			$.getJSON('./musicData.json', function (json) {
+				g3d.more(json.showapi_res_body.pagebean.songlist.slice(22, 43));
+			});
+
+		}, false);
+
+
+
+
+		//g3d.go(50);
+	</script>
+</body>
+
+</html>
