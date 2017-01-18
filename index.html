@@ -27,14 +27,109 @@
 			padding: 0;
 			background-image: url(css/o_wood.jpg);
 		}
+		
+		.album {
+			width: 100%;
+			height: 100%;
+			background-size: cover;
+			top: 0;
+			left: 0;
+			transition: 0.7s all;
+		}
+		
+		.buttons {
+			position: absolute;
+			left: 80px;
+			top: 10px;
+			z-index: 99;
+		}
+		
+		.button {
+			display: inline-block;
+			margin: 5px;
+			font-size: 15px;
+			transition: all .5s;
+			display: inline-block;
+			padding: 7px 15px 7px 15px;
+			border-radius: 10px;
+			background-color: rgb(33, 150, 243);
+			box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 1);
+			text-decoration: none;
+		}
+		
+		.button:hover {
+			background-color: #31b158;
+			color: white
+		}
+		
+		.button:active {
+			box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 1);
+		}
+		
+		.info {
+			position: fixed;
+			width: 50px;
+			height: 50px;
+			background-color: rgba(0, 0, 0, 0.33);
+			top: 10px;
+			left: 10px;
+			border-radius: 50%;
+			transition: 0.7s all;
+			cursor: default;
+		}
+		
+		.info p {
+			line-height: 50px;
+			font-size: 2.5em;
+			margin: 0;
+			text-align: center;
+			z-index: 999;
+			transition: 0.7s all;
+		}
+		
+		.info:hover {
+			box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.8);
+		}
+		
+		.info:hover p {
+			color: white;
+		}
+		
+		.info:hover +div {
+			transform: rotateX(0deg) translateX(0%);
+		}
+		
+		.information {
+			position: fixed;
+			background-color: rgba(0, 0, 0, 0.33);
+			top: 70px;
+			left: 10px;
+			border-radius: 10%;
+			transition: 0.5s all;
+			cursor: default;
+			transform: rotateX(90deg) translateX(-100%);
+		}
+		
+		.information p {
+			text-align: center;
+			margin: 10px;
+			color: white;
+			transition: 0.7s all;
+		}
+		
+		.information p:hover {
+			box-shadow: 5px 5px 5px 1px rgba(0, 0, 0, 0.8);
+		}
 	</style>
 </head>
 
 <body>
 	<!--Controll Start-->
-	<a id="effectChange" class="button" href="#">散列</a>
-	<a id="reset" class="button" href="#">重置</a>
-	<a id="addMore" class="button" href="#">更多</a>
+	<div class="buttons">
+		<a id="effectChange" class="button" href="#">散列</a>
+		<a id="reset" class="button" href="#">重置</a>
+		<a id="addMore" class="button" href="#">更多</a>
+	</div>
 	<!--Controll End-->
 
 
@@ -45,13 +140,23 @@
 	</div>
 	<!--Gallery End-->
 
+
+	<div class="info">
+		<p>ℹ︎</p>
+	</div>
+
+	<div class="information">
+		<p><i>Author:</i> <strong>Liyuan Dong</strong></p>
+		<p><i>Github:</i> <strong>https://github.com/happydongzh</strong></p>
+	</div>
+
+
 	<script src="../../JS_LIB/jquery/jquery-2.2.4.min.js"></script>
-	<script type="text/javascript" src="./javascript/gallery3d.js"></script>
-	
+	<script type="text/javascript" src="js/test.js"></script>
 	<script type="text/javascript">
 		var effectChange = document.getElementById('effectChange');
 
-		var g3d = new Gallery3d(document.getElementById('containers'), {
+		var g3d = new gallery3d(document.getElementById('containers'), {
 			style: 'rect',
 			effect: effectChange.text == '矩阵' ? 'martrix' : 'hash', //排列形式，random：散列 | martrix：矩阵
 			elmtSize: {
@@ -75,8 +180,8 @@
 
 		});
 
-		$.getJSON('./data.json', function (json) {
-			g3d.go(json.showapi_res_body.pagebean.songlist.slice(0, 21));
+		$.getJSON('./musicData.json', function (json) {
+			g3d.go(json.showapi_res_body.pagebean.songlist.slice(0, 1));
 		});
 
 		effectChange.addEventListener('click', function (e) {
