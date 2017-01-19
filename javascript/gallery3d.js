@@ -1,7 +1,7 @@
 /**
  * 
  *Gallery3d
- *Description:
+ *Description:html5+原生javascript,css3实现的3d 相册
  *Auther: Liyuan Dong
  *Version: 0.1
  *Github: https://github.com/happydongzh
@@ -10,12 +10,12 @@
  *
  *
  * Bugs:
- *	1. 点击元素时，有可能showSlide无法打开，因为木有找到真正的目标元素，而找到的是子元素(如果自定义元素内容的话)
  *
  *
  * Coming soon:
- 	1. 动态加载更多。
-	2. 加载等待动画
+ 	1. remove elements
+	2. add elements when scroll to Z bottom.
+	
  **/
 
 
