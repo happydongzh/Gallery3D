@@ -32,11 +32,12 @@
 	function Gallery3d(domElmt, options) {
 		var self = this;
 		this.containers = domElmt;
+
 		this.settings = {
-			//container Size
+			//container Size, 如果自定义了size，则窗口改变大小时不调整元素
 			layerConSize: {
-				w: Math.floor(winSize.w),
-				h: Math.floor(winSize.h)
+				w: Math.floor(winSize.w * 0.8),
+				h: Math.floor(winSize.h * 0.8)
 			},
 			//child element size
 			elmtSize: {
@@ -67,6 +68,7 @@
 			for (p in options) {
 				this.settings[p] = options[p];
 			}
+			this.dynamicSize = options['layerConSize'] ? false : true;
 		};
 
 		this.data = [],
@@ -133,7 +135,6 @@
 
 			function updateTransform() {
 				self.containers.style.transform = 'rotateX(' + self.rotate3d.y + 'deg) rotateY(' + -self.rotate3d.x + 'deg) rotateZ(' + self.rotate3d.z + 'deg) translateX(' + self.translate3d.x + 'px) translateY(' + self.translate3d.y + 'px) translateZ(' + self.translate3d.z + 'px) ';
-
 			};
 
 			var _support = "onwheel" in document.createElement("div") ? "wheel" : // 各个厂商的高版本浏览器都支持"wheel"
@@ -220,7 +221,30 @@
 				self.containers.style.transform = 'rotateX(' + self.rotate3d.y + 'deg) rotateY(' + -self.rotate3d.x + 'deg) rotateZ(' + self.rotate3d.z + 'deg) translateX(' + self.translate3d.x * step + 'px) translateY(' + self.translate3d.y * step + 'px) translateZ(' + self.translate3d.z + 'px) ';
 
 			}, false);
+			window.addEventListener('resize', function () {
+				//console.log('resizing...');
+				if (!self.dynamicSize) {
+					return;
+				}
 
+				winSize = {
+					w: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth,
+					h: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+				};
+				self.settings.layerConSize.w = Math.floor(winSize.w * 0.8);
+				self.settings.layerConSize.h = Math.floor(winSize.h * 0.8);
+
+				self.containers.style.width = self.settings.layerConSize.w + 'px';
+				self.containers.style.height = self.settings.layerConSize.h + 'px';
+				self.loading.firstChild.style.top = (winSize.h - 60) / 2 + 'px';
+				self.loading.firstChild.style.left = (winSize.w - 60) / 2 + 'px';
+
+				self.perspective = self.settings.perspective;
+				var domElmts = self.containers.children;
+
+				self.settings.effect == 'hash' ?
+					self.placeElementRandom(domElmts) : self.placeElementMartrix(domElmts);
+			}, false);
 			self.containers.addEventListener('click', function (e) {
 				if (!self.settings.osswcc) return;
 
@@ -276,8 +300,8 @@
 			var ps = [];
 			for (var i = 0; i < elms.length; i++) {
 				var elm = elms[i];
-				var t = Math.floor(Math.random() * (self.settings.layerConSize.h * 0.8)),
-					l = Math.floor(Math.random() * (self.settings.layerConSize.w * 0.8)),
+				var t = Math.floor(Math.random() * self.settings.layerConSize.h),
+					l = Math.floor(Math.random() * self.settings.layerConSize.w),
 					transValue = Math.floor((Math.random()) * self.perspective);
 
 				elm.style.top = t + 'px';
@@ -292,7 +316,7 @@
 
 			//重新设置景深为最后一个元素的Z位置
 			var perst = Math.max.apply(Math, ps);
-			console.log(self.perspective + '|' + perst);
+			//console.log(self.perspective + '|' + perst);
 			//self.perspective = Math.min(self.perspective, perst) * 5;
 			self.perspective += 300; //Math.min(self.perspective, perst) * 5;
 			self.show(elms);
@@ -303,11 +327,11 @@
 			var self = this;
 			var elmts = domElmts;
 			var amount = domElmts.length,
-				lStep = self.settings.elmtSize.w * 0.8 + 50, //x轴间距
-				tStep = self.settings.elmtSize.h * 0.8 + 50, //y轴间距
+				lStep = self.settings.elmtSize.w + 50, //x轴间距
+				tStep = self.settings.elmtSize.h + 50, //y轴间距
 				zStep = (lStep < tStep ? lStep : tStep) / 2, //z轴间距
-				cols = Math.floor(self.settings.layerConSize.w * 0.8 / lStep), //列的数量
-				rows = Math.floor(self.settings.layerConSize.h * 0.8 / tStep), //行的数量
+				cols = Math.floor(self.settings.layerConSize.w / lStep), //列的数量
+				rows = Math.floor(self.settings.layerConSize.h / tStep), //行的数量
 				zCount = Math.ceil(amount / (cols * rows)), //层的数量
 
 				count = 0, //计数器
@@ -318,8 +342,6 @@
 				z = 0,
 				r = 0,
 				c = 0;
-
-
 			for (; z < zCount; z++) {
 				for (; r < rows; r++) {
 					for (; c < cols; c++) {
@@ -349,7 +371,7 @@
 			}
 
 			self.perspective = (zCount * zStep) * 2 + 1000; //self.perspective;
-			
+
 			self.show(elmts);
 		},
 		//切换效果 散列／矩阵
@@ -383,7 +405,7 @@
 			if (self.isOpen) {
 				self.slideClose();
 			}
-			
+
 			//保存当前元素和container的位置信息
 			self.transformState.transform = item.style.transform;
 			self.transformState.top = item.style.top;
@@ -393,7 +415,7 @@
 			if (self.settings.keepState) {
 				self.transformState.currentContainerStyle = self.containers.style.transform;
 			}
-			
+
 			//设置元素和container的位置信息
 			item.style.transform = '';
 			item.style.top = (self.settings.layerConSize.h - self.settings.elmtSize.h * 4) / 2 + 'px';

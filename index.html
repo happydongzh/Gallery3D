@@ -21,7 +21,7 @@
 	<meta name="robots" content="all" />
 	<link rel="stylesheet" type="text/css" href="css/gallery3d.css">
 	<style>
-		body {
+	body {
 			overflow: hidden;
 			margin: 0;
 			padding: 0;
@@ -109,6 +109,88 @@
 			left: 50px;
 			width: 500px;
 		}
+		
+		.keyDirectinos {
+			position: fixed;
+			right: 50px;
+			top: 60px;
+			z-index: 99;
+			width: 90px;
+		}
+		
+		.keyDirectinos > div {
+			height: 26px;
+			width: 100%;
+			position: relative;
+			display: inline-block;
+		}
+		
+		.keyDirectinos > div > span {
+			height: 30px;
+			width: 30px;
+			position: relative;
+			float: left;
+			text-align: center;
+			line-height: 30px;
+			font-size: 1.5em;
+			color: black;
+			cursor: default;
+			transition: all 0.3s;
+		}
+		
+		.keyDirectinos > div:nth-child(1) > span:nth-child(2) {
+			background-color: rgba(0, 0, 0, 0.33);
+		}
+		
+		.keyDirectinos > div:nth-child(2) > span {
+			background-color: rgba(0, 0, 0, 0.33);
+		}
+		
+		.keyDirectinos > div:nth-child(2) > span:nth-child(3) {
+			transform: rotateY(180deg)
+		}
+		
+		.keyDirectinos > div:nth-child(3) > span:nth-child(2) {
+			background-color: rgba(0, 0, 0, 0.33);
+		}
+		
+		.keyDirectinos > div:nth-child(1) > span:nth-child(2):hover,
+		.keyDirectinos > div:nth-child(2) > span:nth-child(1):hover,
+		.keyDirectinos > div:nth-child(2) > span:nth-child(3):hover,
+		.keyDirectinos > div:nth-child(3) > span:nth-child(2):hover {
+			color: aliceblue;
+		}
+		
+		.keyDirectinos > div:nth-child(1) > span:nth-child(2):active,
+		.keyDirectinos > div:nth-child(2) > span:nth-child(1):active,
+		.keyDirectinos > div:nth-child(2) > span:nth-child(2):active,
+		.keyDirectinos > div:nth-child(2) > span:nth-child(3):active,
+		.keyDirectinos > div:nth-child(3) > span:nth-child(2):active {
+			box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, .9) inset;
+		}
+		
+		.message {
+			position: fixed;
+			text-align: center;
+			line-height: 30px;
+			font-size: 1.5em;
+			color: black;
+			cursor: default;
+			transition: all 3s;
+			right: 50px;
+			top: 170px;
+			z-index: 99;
+			background-color: rgba(0, 0, 0, 0.33);
+			font-size: 1.2em;
+			border-radius: 15px;
+			padding: 5px;
+			color: whitesmoke;
+		}
+		
+		.invisible {
+			opacity: 0;
+		}
+	}
 	</style>
 </head>
 
@@ -118,6 +200,29 @@
 		<a id="effectChange" class="button" href="#">散列</a>
 		<a id="reset" class="button" href="#">重置</a>
 		<a id="addMore" class="button" href="#">更多</a>
+	</div>
+
+
+	<div id="keyDirectinos" class="keyDirectinos">
+		<div>
+			<span></span>
+			<span id='up'>⬆</span>
+			<span></span>
+		</div>
+		<div>
+			<span id='left'>⬅</span>
+			<span id='mouse'>🖱</span>
+			<span id='right'>⬅</span>
+		</div>
+		<div>
+			<span></span>
+			<span id='down'>⬇</span>
+			<span></span>
+		</div>
+	</div>
+	<div id="message" class="message invisible">
+		按下鼠标左键并移动鼠标看看
+		<br/> left-click & hold, then move your mouse
 	</div>
 	<!--Controll End-->
 
@@ -191,6 +296,34 @@
 
 		}, false);
 
+		document.getElementById('keyDirectinos').addEventListener('click', function (e) {
+			//console.log(e.target.id);
+			var step = 50;
+			var dir = e.target.id;
+			switch (dir) {
+			case "up":
+				g3d.translate3d.y--
+					break;
+			case "down":
+				g3d.translate3d.y++
+					break;
+			case "left":
+				g3d.translate3d.x--
+					break;
+			case "right":
+				g3d.translate3d.x++
+					break;
+			case "mouse":
+				var msg = document.getElementById('message');
+				msg.className = msg.className.indexOf('invisible') == -1 ? 'message invisible' :
+					'message';
+				break;
+			default:
+
+			};
+
+			g3d.containers.style.transform = 'rotateX(' + g3d.rotate3d.y + 'deg) rotateY(' + -g3d.rotate3d.x + 'deg) rotateZ(' + g3d.rotate3d.z + 'deg) translateX(' + g3d.translate3d.x * step + 'px) translateY(' + g3d.translate3d.y * step + 'px) translateZ(' + g3d.translate3d.z + 'px) ';
+		}, false);
 	</script>
 </body>
 
